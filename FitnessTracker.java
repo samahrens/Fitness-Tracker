@@ -26,15 +26,15 @@ public class FitnessTracker extends JPanel {
     public FitnessTracker() {
         super(new GridLayout(1, 1));
         JTabbedPane tabbedPane = new JTabbedPane();
-
         JComponent InputDailyNutrition = new JPanel();
-        InputDailyNutrition.setAlignmentX(Component.CENTER_ALIGNMENT);
+        InputDailyNutrition.setLayout(null);
+
         String[] choices = {"Select Day Of Week", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
         final JComboBox<String> comboBox = new JComboBox<>(choices);
-        comboBox.setVisible(true);
         InputDailyNutrition.add(comboBox);
         enterCalories = new JTextField("Enter Calories (kcal)", 15);
         enterCalories.addActionListener(actionListener);
+        enterCalories.setBounds(100, 100, 140, 25); //THIS IS WHAT I WAS LOOKING FOR
         InputDailyNutrition.add(enterCalories);
         enterProtein = new JTextField("Enter Protein (g)", 15);
         enterProtein.addActionListener(actionListener);
@@ -47,9 +47,13 @@ public class FitnessTracker extends JPanel {
         InputDailyNutrition.add(enter1);
         tabbedPane.addTab("Input Daily Nutrition", InputDailyNutrition);
 
+        JComponent test = new JPanel();
+        tabbedPane.addTab("test tab", test);
+
+
+
         add(tabbedPane);
         tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
-
     }
 
     private static void createAndShowGUI() {
