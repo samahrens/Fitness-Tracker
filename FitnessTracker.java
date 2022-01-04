@@ -8,12 +8,11 @@ import java.util.ArrayList;
 
 public class FitnessTracker extends JPanel {
     private static JFrame frame;
-    String dayofweek;
+    String dayOfWeek;
     int calories;
     int protein;
     int carbs;
     private static ArrayList<FitnessTracker> dailyInformation = new ArrayList<>();
-//    FitnessTracker ft = new FitnessTracker("tues", 15, 15, 12);
     //tab 1:
     private final String[] choices = {"Select Day Of Week", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
     private JComboBox<String> comboBox = new JComboBox<>(choices);
@@ -28,9 +27,6 @@ public class FitnessTracker extends JPanel {
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == enter1) {
                 test();
-                toString();
-                FitnessTracker.this.toString();
-                
             }
 
 
@@ -38,13 +34,13 @@ public class FitnessTracker extends JPanel {
     };
 
     public void test() {
-        String cbChoice = (String) comboBox.getSelectedItem();
-        System.out.println(cbChoice);
-        dailyInformation.add(new FitnessTracker(cbChoice, 0, 0, 0));
-        System.out.println("hi");
-//        System.out.println(dailyInformation.get(0).toString());
-        toString();
-        System.out.println("hello");
+        dayOfWeek = (String) comboBox.getSelectedItem();
+        calories = Integer.parseInt(enterCalories.getText());
+        protein = Integer.parseInt(enterProtein.getText());
+        carbs = Integer.parseInt(enterCarbohydrates.getText());
+        dailyInformation.add(new FitnessTracker(dayOfWeek, calories, protein, carbs));
+        System.out.println(dailyInformation.toString());
+
     }
 
     public FitnessTracker() {
@@ -84,8 +80,8 @@ public class FitnessTracker extends JPanel {
         tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
     }
 
-    public FitnessTracker(String dayofweek, int calories, int protein, int carbs) {
-        this.dayofweek = dayofweek;
+    public FitnessTracker(String dayOfWeek, int calories, int protein, int carbs) {
+        this.dayOfWeek = dayOfWeek;
         this.calories = calories;
         this.protein = protein;
         this.carbs = carbs;
@@ -93,12 +89,7 @@ public class FitnessTracker extends JPanel {
 
     @Override
     public String toString() {
-        return "FitnessTracker{" +
-                "comboBox=" + comboBox +
-                ", enterCalories=" + enterCalories +
-                ", enterProtein=" + enterProtein +
-                ", enterCarbohydrates=" + enterCarbohydrates +
-                '}';
+        return dayOfWeek + ", " + calories + ", " + protein + ", " + carbs;
     }
 
     private static void createAndShowGUI() {
