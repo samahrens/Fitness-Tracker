@@ -26,21 +26,41 @@ public class FitnessTracker extends JPanel {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == enter1) {
-                test();
+                InputDailyNutrition();
             }
-
-
         }
     };
 
-    public void test() {
-        dayOfWeek = (String) comboBox.getSelectedItem();
-        calories = Integer.parseInt(enterCalories.getText());
-        protein = Integer.parseInt(enterProtein.getText());
-        carbs = Integer.parseInt(enterCarbohydrates.getText());
-        dailyInformation.add(new FitnessTracker(dayOfWeek, calories, protein, carbs));
-        System.out.println(dailyInformation.toString());
-
+    public void InputDailyNutrition() {
+        try {
+            //throws Exception
+            dayOfWeek = (String) comboBox.getSelectedItem();
+            if (dayOfWeek.equals("Select Day Of Week")) {
+                throw new Exception();
+            }
+            //throws NumberFormatException
+            calories = Integer.parseInt(enterCalories.getText());
+            protein = Integer.parseInt(enterProtein.getText());
+            carbs = Integer.parseInt(enterCarbohydrates.getText());
+            dailyInformation.add(new FitnessTracker(dayOfWeek, calories, protein, carbs));
+            System.out.println(dailyInformation.toString());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "Please enter a number and try again.", "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Please select a valid option and try again.", "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+//        try {
+//            calories = Integer.parseInt(enterCalories.getText());
+//            protein = Integer.parseInt(enterProtein.getText());
+//            carbs = Integer.parseInt(enterCarbohydrates.getText());
+//            dailyInformation.add(new FitnessTracker(dayOfWeek, calories, protein, carbs));
+//            System.out.println(dailyInformation.toString());
+//        } catch (NumberFormatException e) {
+//            JOptionPane.showMessageDialog(null, "Please enter a number and try again.", "Error",
+//                    JOptionPane.ERROR_MESSAGE);
+//        }
     }
 
     public FitnessTracker() {
