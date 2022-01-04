@@ -4,10 +4,19 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 
 public class FitnessTracker extends JPanel {
     private static JFrame frame;
+    String dayofweek;
+    int calories;
+    int protein;
+    int carbs;
+    private static ArrayList<FitnessTracker> dailyInformation = new ArrayList<>();
+//    FitnessTracker ft = new FitnessTracker("tues", 15, 15, 12);
     //tab 1:
+    private final String[] choices = {"Select Day Of Week", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
+    private JComboBox<String> comboBox = new JComboBox<>(choices);
     private JTextField enterCalories;
     private JTextField enterProtein;
     private JTextField enterCarbohydrates;
@@ -17,11 +26,26 @@ public class FitnessTracker extends JPanel {
     ActionListener actionListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-//            if (e.getSource() == homepage1 || e.getSource() == homepage2 || e.getSource() == homepage3 || e.getSource() == homepage4 || e.getSource() == homepage5) {
-//
-//            }
+            if (e.getSource() == enter1) {
+                test();
+                toString();
+                FitnessTracker.this.toString();
+                
+            }
+
+
         }
     };
+
+    public void test() {
+        String cbChoice = (String) comboBox.getSelectedItem();
+        System.out.println(cbChoice);
+        dailyInformation.add(new FitnessTracker(cbChoice, 0, 0, 0));
+        System.out.println("hi");
+//        System.out.println(dailyInformation.get(0).toString());
+        toString();
+        System.out.println("hello");
+    }
 
     public FitnessTracker() {
         super(new GridLayout(1, 1));
@@ -30,20 +54,24 @@ public class FitnessTracker extends JPanel {
         InputDailyNutrition.setLayout(null);
 
         String[] choices = {"Select Day Of Week", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
-        final JComboBox<String> comboBox = new JComboBox<>(choices);
+//        final JComboBox<String> comboBox = new JComboBox<>(choices);
+        comboBox.setBounds(225, 25, 140, 25);
         InputDailyNutrition.add(comboBox);
         enterCalories = new JTextField("Enter Calories (kcal)", 15);
         enterCalories.addActionListener(actionListener);
-        enterCalories.setBounds(100, 100, 140, 25); //THIS IS WHAT I WAS LOOKING FOR
+        enterCalories.setBounds(225, 75, 140, 25);
         InputDailyNutrition.add(enterCalories);
         enterProtein = new JTextField("Enter Protein (g)", 15);
         enterProtein.addActionListener(actionListener);
+        enterProtein.setBounds(225, 125, 140, 25);
         InputDailyNutrition.add(enterProtein);
         enterCarbohydrates = new JTextField("Enter Carbohydrates (g)", 15);
         enterCarbohydrates.addActionListener(actionListener);
+        enterCarbohydrates.setBounds(225, 175, 140, 25);
         InputDailyNutrition.add(enterCarbohydrates);
         enter1 = new JButton("Enter");
         enter1.addActionListener(actionListener);
+        enter1.setBounds(225, 225, 140, 25);
         InputDailyNutrition.add(enter1);
         tabbedPane.addTab("Input Daily Nutrition", InputDailyNutrition);
 
@@ -54,6 +82,23 @@ public class FitnessTracker extends JPanel {
 
         add(tabbedPane);
         tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+    }
+
+    public FitnessTracker(String dayofweek, int calories, int protein, int carbs) {
+        this.dayofweek = dayofweek;
+        this.calories = calories;
+        this.protein = protein;
+        this.carbs = carbs;
+    }
+
+    @Override
+    public String toString() {
+        return "FitnessTracker{" +
+                "comboBox=" + comboBox +
+                ", enterCalories=" + enterCalories +
+                ", enterProtein=" + enterProtein +
+                ", enterCarbohydrates=" + enterCarbohydrates +
+                '}';
     }
 
     private static void createAndShowGUI() {
