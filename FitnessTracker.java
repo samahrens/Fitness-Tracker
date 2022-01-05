@@ -1,6 +1,7 @@
 import com.sun.jdi.request.DuplicateRequestException;
 
 import javax.swing.*;
+import javax.swing.text.View;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,6 +13,7 @@ public class FitnessTracker extends JPanel {
     private static JFrame frame;
     String dayOfWeek;
     String dayOfWeek2;
+    String dayOfWeek3;
     int calories;
     int protein;
     int carbs;
@@ -27,6 +29,15 @@ public class FitnessTracker extends JPanel {
     private final String[] choices2 = {"Select Day Of Week", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
     private JComboBox<String> comboBox2 = new JComboBox<>(choices2);
     private JButton deleteData;
+    //tab 3:
+    private final String[] choices3 = {"Select Day Of Week", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
+    private JComboBox<String> comboBox3 = new JComboBox<>(choices3);
+    private JButton viewData;
+    private JButton setWeeklyGoal;
+    int caloriesGoal = 0;
+    int proteinGoal = 0;
+    int carbsGoal = 0;
+    private JButton showWeeklyStatistics;
 
     ActionListener actionListener = new ActionListener() {
         @Override
@@ -36,6 +47,15 @@ public class FitnessTracker extends JPanel {
             }
             if (e.getSource() == deleteData) {
                 DeleteDailyNutrition();
+            }
+            if (e.getSource() == setWeeklyGoal) {
+                SetWeeklyGoal();
+            }
+            if (e.getSource() == showWeeklyStatistics) {
+                ShowWeeklyStatistics();
+            }
+            if (e.getSource() == viewData) {
+                ViewData();
             }
         }
     };
@@ -86,6 +106,162 @@ public class FitnessTracker extends JPanel {
             if (!dailyInformation.toString().contains(dayOfWeek2)) {
                 throw new Exception();
             }
+
+            for (int i = 0; i < dailyInformation.size(); i++) {
+                if (dailyInformation.get(i).toString().contains(dayOfWeek2)) {
+                    dailyInformation.remove(dailyInformation.get(i));
+                }
+            }
+
+            JOptionPane.showMessageDialog(null, "Data removed successfully!", "Success",
+                    JOptionPane.INFORMATION_MESSAGE);
+        } catch (IllegalArgumentException e) {
+            JOptionPane.showMessageDialog(null, "Please select a valid option and try again.", "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Nutritional data for this day of the week is already empty.", "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+
+
+    }
+
+    public void SetWeeklyGoal() {
+        try {
+            String stringCaloriesGoal = (JOptionPane.showInputDialog(null, "What is your daily calorie goal? (kcal)", "Calorie Goal", JOptionPane.QUESTION_MESSAGE));
+            if (stringCaloriesGoal == null) {
+                throw new Exception();
+            }
+            caloriesGoal = Integer.parseInt(stringCaloriesGoal);
+            if (caloriesGoal == 0) {
+                throw new NumberFormatException();
+            }
+            String stringProteinGoal = (JOptionPane.showInputDialog(null, "What is your daily protein goal? (g)", "Protein Goal", JOptionPane.QUESTION_MESSAGE));
+            if (stringProteinGoal == null) {
+                throw new Exception();
+            }
+            proteinGoal = Integer.parseInt(stringProteinGoal);
+            if (proteinGoal == 0) {
+                throw new NumberFormatException();
+            }
+            String stringCarbsGoal = (JOptionPane.showInputDialog(null, "What is your daily carbohydrate goal? (g)", "Carbohydrate Goal", JOptionPane.QUESTION_MESSAGE));
+            if (stringCarbsGoal == null) {
+                throw new Exception();
+            }
+            carbsGoal = Integer.parseInt(stringCarbsGoal);
+            if (carbsGoal == 0) {
+                throw new NumberFormatException();
+            }
+
+            JOptionPane.showMessageDialog(null, "Weekly goal set successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "Please enter a valid number and try again.", "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            System.out.println("it worked");
+        }
+        System.out.println(caloriesGoal + " " + proteinGoal + " " + carbsGoal);
+    }
+
+    public void ShowWeeklyStatistics() {
+        int totalCalories = 0;
+        int totalProtein = 0;
+        int totalCarbs = 0;
+        int avgCalories = 0;
+        int avgProtein = 0;
+        int avgCarbs = 0;
+        String statisticsString = "";
+
+        try {
+            //average calories, protein, carbs
+            if (dailyInformation.isEmpty()) {
+                throw new Exception();
+            }
+            for (int i = 0; i < dailyInformation.size(); i++) {
+                totalCalories += dailyInformation.get(i).calories;
+                totalProtein += dailyInformation.get(i).protein;
+                totalCarbs += dailyInformation.get(i).carbs;
+            }
+            avgCalories = totalCalories / dailyInformation.size();
+            avgProtein = totalProtein / dailyInformation.size();
+            avgCarbs = totalCarbs / dailyInformation.size();
+
+            // if they inputted their weekly goals, say whether this is over or under their goal, otherwise tell them to input their weekly goals
+            if (caloriesGoal == 0 || proteinGoal == 0 || carbsGoal == 0) {
+                statisticsString = "Here are your weekly statistics:\n" +
+                        "Average Calories: " + avgCalories +
+                        "\nAverage Protein: " + avgProtein +
+                        "\nAverage Carbohydrates: " + avgCarbs +
+                        "\nEnter your weekly goals to see if you were near them!";
+            } else {
+                String calorieStr = "";
+                String proteinStr = "";
+                String carbsStr = "";
+
+                if (avgCalories > caloriesGoal) {
+                    calorieStr = "You were over your weekly calorie goal by " + (avgCalories - caloriesGoal) + " calorie(s).";
+                } else if (avgCalories < caloriesGoal) {
+                    calorieStr = "You were under your weekly calorie goal by " + (caloriesGoal - avgCalories) + " calorie(s).";
+                } else {
+                    calorieStr = "Your weekly calorie goal was met.";
+                }
+
+                if (avgProtein > proteinGoal) {
+                    proteinStr = "You were over your weekly protein goal by " + (avgProtein - proteinGoal) + " grams(s).";
+                } else if (avgProtein < proteinGoal) {
+                    proteinStr = "You were under your weekly protein goal by " + (proteinGoal - avgProtein) + " gram(s).";
+                } else {
+                    proteinStr = "Your weekly protein goal was met.";
+                }
+
+                if (avgCarbs > carbsGoal) {
+                    carbsStr = "You were over your weekly carbohydrate goal by " + (avgCarbs - carbsGoal) + " gram(s).";
+                } else if (avgCarbs < carbsGoal) {
+                    carbsStr = "You were under your weekly carbohydrate goal by " + (carbsGoal - avgCarbs) + " gram(s).";
+                } else {
+                    carbsStr = "Your weekly carbohydrate goal was met.";
+                }
+
+                statisticsString = "Here are your weekly statistics:\n" +
+                        "Average Calories: " + avgCalories + "\n" + calorieStr +
+                        "\nAverage Protein: " + avgProtein + "\n" + proteinStr +
+                        "\nAverage Carbohydrates: " + avgCarbs + "\n" + carbsStr;
+            }
+            JOptionPane.showMessageDialog(null, statisticsString, "Weekly Statistics", JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "You have not inputted any nutritional data!", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public void ViewData() {
+        String viewData = "";
+        int retrievedCalories = 0;
+        int retrievedProtein = 0;
+        int retrievedCarbs = 0;
+
+        try {
+            dayOfWeek3 = (String) comboBox3.getSelectedItem();
+            if (dayOfWeek3.equals("Select Day Of Week")) {
+                throw new IllegalArgumentException();
+            }
+
+            if (!dailyInformation.toString().contains(dayOfWeek3)) {
+                throw new Exception();
+            }
+
+            for (int i = 0; i < dailyInformation.size(); i++) {
+                if (dailyInformation.get(i).toString().contains(dayOfWeek3)) {
+                    retrievedCalories = dailyInformation.get(i).calories;
+                    retrievedProtein = dailyInformation.get(i).protein;
+                    retrievedCarbs = dailyInformation.get(i).carbs;
+                }
+            }
+
+            viewData = "On " + dayOfWeek3 + ", you consumed:\n" + retrievedCalories + " calories\n" +
+                    retrievedProtein + " grams of protein\n" +
+                    retrievedCarbs + " grams of carbohydrates";
+
+            JOptionPane.showMessageDialog(null, viewData, "View Day-Specific Data",
+                    JOptionPane.INFORMATION_MESSAGE);
         } catch (IllegalArgumentException e) {
             JOptionPane.showMessageDialog(null, "Please select a valid option and try again.", "Error",
                     JOptionPane.ERROR_MESSAGE);
@@ -93,15 +269,6 @@ public class FitnessTracker extends JPanel {
             JOptionPane.showMessageDialog(null, "Nutritional data for this day of the week is empty.", "Error",
                     JOptionPane.ERROR_MESSAGE);
         }
-
-        for (int i = 0; i < dailyInformation.size(); i++) {
-            if (dailyInformation.get(i).toString().contains(dayOfWeek2)) {
-                dailyInformation.remove(dailyInformation.get(i));
-            }
-        }
-
-        JOptionPane.showMessageDialog(null, "Data removed successfully!", "Success",
-                JOptionPane.INFORMATION_MESSAGE);
     }
 
     public FitnessTracker() {
@@ -142,6 +309,24 @@ public class FitnessTracker extends JPanel {
         DeleteDailyNutrition.add(deleteData);
         tabbedPane.addTab("Delete Daily Nutrition", DeleteDailyNutrition);
 
+        ///////////
+        JComponent ViewWeeklyData = new JPanel();
+        ViewWeeklyData.setLayout(null);
+        comboBox3.setBounds(225, 125, 140, 25);
+        ViewWeeklyData.add(comboBox3);
+        viewData = new JButton("View Data");
+        viewData.addActionListener(actionListener);
+        viewData.setBounds(225, 175, 140, 25);
+        ViewWeeklyData.add(viewData);
+        setWeeklyGoal = new JButton("Set Weekly Goals");
+        setWeeklyGoal.addActionListener(actionListener);
+        setWeeklyGoal.setBounds(225, 25, 140, 25);
+        ViewWeeklyData.add(setWeeklyGoal);
+        showWeeklyStatistics = new JButton("View Statistics");
+        showWeeklyStatistics.addActionListener(actionListener);
+        showWeeklyStatistics.setBounds(225, 75, 140, 25);
+        ViewWeeklyData.add(showWeeklyStatistics);
+        tabbedPane.addTab("View Weekly Data", ViewWeeklyData);
 
         add(tabbedPane);
         tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
