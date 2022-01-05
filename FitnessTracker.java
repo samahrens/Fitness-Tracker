@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class FitnessTracker extends JPanel {
@@ -38,6 +39,17 @@ public class FitnessTracker extends JPanel {
     int proteinGoal = 0;
     int carbsGoal = 0;
     private JButton showWeeklyStatistics;
+    //tab 4:
+    private final String[] choicesMET = {"Select MET (difficulty of task)",
+            "1 MET (sitting idly)", "2 MET (light-intensity)", "3 MET (moderate-intensity)",
+            "4 MET (moderate-intensity)", "5 MET (moderate-intensity)", "6 MET (moderate-intensity)",
+            "7 MET (vigorous-intensity)", "8 MET (vigorous-intensity)", "9 MET (vigorous-intensity)"};
+    private JComboBox<String> selectMET = new JComboBox<>(choicesMET);
+    private JTextField enterDuration;
+    private JTextField enterBodyWeight;
+    private JButton enter2;
+    private JTextField enterActivity;
+
 
     ActionListener actionListener = new ActionListener() {
         @Override
@@ -56,6 +68,9 @@ public class FitnessTracker extends JPanel {
             }
             if (e.getSource() == viewData) {
                 ViewData();
+            }
+            if (e.getSource() == enter2) {
+                CaloriesBurnedCalculator();
             }
         }
     };
@@ -271,6 +286,42 @@ public class FitnessTracker extends JPanel {
         }
     }
 
+    public void CaloriesBurnedCalculator() {
+        try {
+            String activity = enterActivity.getText();
+            System.out.println(activity);
+            if (activity.isBlank()) {
+                throw new IOException();   //i need to change this and make my own exception lol
+            }
+
+            int duration = Integer.parseInt(enterDuration.getText());
+            int bodyWeight = Integer.parseInt(enterBodyWeight.getText());
+
+            String choiceMET = (String) selectMET.getSelectedItem();
+            if (choiceMET.equals("Select MET (difficulty of task)")) {
+                throw new Exception();
+            }
+            char num = choiceMET.charAt(0);
+            int intMET = Integer.parseInt(String.valueOf(num));
+            System.out.println(intMET);
+
+            double caloriesBurned = duration * (intMET * 3.5 * bodyWeight) / 200;
+            System.out.println(caloriesBurned);
+
+            String displayCaloriesBurned = "You burned " + caloriesBurned + " calories while " + activity + ".";
+            JOptionPane.showMessageDialog(null, displayCaloriesBurned, "Calories Burned", JOptionPane.INFORMATION_MESSAGE);
+        } catch (IOException g) {
+            JOptionPane.showMessageDialog(null, "Please enter the activity's name and try again.", "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        } catch(NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "Please enter a number and try again.", "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Please select a valid option and try again.", "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
     public FitnessTracker() {
         super(new GridLayout(1, 1));
         JTabbedPane tabbedPane = new JTabbedPane();
@@ -327,6 +378,29 @@ public class FitnessTracker extends JPanel {
         showWeeklyStatistics.setBounds(225, 75, 140, 25);
         ViewWeeklyData.add(showWeeklyStatistics);
         tabbedPane.addTab("View Weekly Data", ViewWeeklyData);
+
+        ///////////
+        JComponent CaloriesBurned = new JPanel();
+        CaloriesBurned.setLayout(null);
+        selectMET.setBounds(200, 125, 200, 25);
+        CaloriesBurned.add(selectMET);
+        enterDuration = new JTextField("Enter Duration (minutes)", 15);
+        enterDuration.addActionListener(actionListener);
+        enterDuration.setBounds(225, 75, 140, 25);
+        CaloriesBurned.add(enterDuration);
+        enterBodyWeight = new JTextField("Enter Body Weight (kg)", 15);
+        enterBodyWeight.addActionListener(actionListener);
+        enterBodyWeight.setBounds(225, 175, 140, 25);
+        CaloriesBurned.add(enterBodyWeight);
+        enter2 = new JButton("Enter");
+        enter2.addActionListener(actionListener);
+        enter2.setBounds(225, 225, 140, 25);
+        CaloriesBurned.add(enter2);
+        enterActivity = new JTextField("Activity Name");
+        enterActivity.addActionListener(actionListener);
+        enterActivity.setBounds(225, 25, 140, 25);
+        CaloriesBurned.add(enterActivity);
+        tabbedPane.addTab("Calories Burned Calculator", CaloriesBurned);
 
         add(tabbedPane);
         tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
