@@ -7,11 +7,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.*;
-import java.security.spec.ECField;
 import java.util.ArrayList;
 
 public class FitnessTracker extends JPanel {
-    private static JFrame frame;
     String dayOfWeek;
     String dayOfWeek2;
     String dayOfWeek3;
@@ -20,36 +18,36 @@ public class FitnessTracker extends JPanel {
     int carbs;
     private static ArrayList<FitnessTracker> dailyInformation = new ArrayList<>();
     //tab 1:
-    private final String[] choices = {"Select Day Of Week", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
-    private JComboBox<String> comboBox = new JComboBox<>(choices);
-    private JTextField enterCalories;
-    private JTextField enterProtein;
-    private JTextField enterCarbohydrates;
-    private JButton enter1;
+    final String[] choices = {"Select Day Of Week", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
+    JComboBox<String> comboBox = new JComboBox<>(choices);
+    JTextField enterCalories;
+    JTextField enterProtein;
+    JTextField enterCarbohydrates;
+    JButton enter1;
     //tab 2:
-    private final String[] choices2 = {"Select Day Of Week", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
-    private JComboBox<String> comboBox2 = new JComboBox<>(choices2);
-    private JButton deleteData;
+    final String[] choices2 = {"Select Day Of Week", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
+    JComboBox<String> comboBox2 = new JComboBox<>(choices2);
+    JButton deleteData;
     //tab 3:
-    private final String[] choices3 = {"Select Day Of Week", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
-    private JComboBox<String> comboBox3 = new JComboBox<>(choices3);
-    private JButton viewData;
-    private JButton setWeeklyGoal;
-    private static ArrayList<Integer> weeklyGoals = new ArrayList<>();
+    final String[] choices3 = {"Select Day Of Week", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
+    JComboBox<String> comboBox3 = new JComboBox<>(choices3);
+    JButton viewData;
+    JButton setWeeklyGoal;
+    static ArrayList<Integer> weeklyGoals = new ArrayList<>();
     private static int caloriesGoal = 0;
     private static int proteinGoal = 0;
     private static int carbsGoal = 0;
-    private JButton showWeeklyStatistics;
+    JButton showWeeklyStatistics;
     //tab 4:
-    private final String[] choicesMET = {"Select MET (difficulty of task)",
+    final String[] choicesMET = {"Select MET (difficulty of task)",
             "1 MET (sitting idly)", "2 MET (light-intensity)", "3 MET (moderate-intensity)",
             "4 MET (moderate-intensity)", "5 MET (moderate-intensity)", "6 MET (moderate-intensity)",
             "7 MET (vigorous-intensity)", "8 MET (vigorous-intensity)", "9 MET (vigorous-intensity)"};
-    private JComboBox<String> selectMET = new JComboBox<>(choicesMET);
-    private JTextField enterDuration;
-    private JTextField enterBodyWeight;
-    private JButton enter2;
-    private JTextField enterActivity;
+    JComboBox<String> selectMET = new JComboBox<>(choicesMET);
+    JTextField enterDuration;
+    JTextField enterBodyWeight;
+    JButton enter2;
+    JTextField enterActivity;
 
 
     ActionListener actionListener = new ActionListener() {
@@ -78,25 +76,21 @@ public class FitnessTracker extends JPanel {
 
     public void InputDailyNutrition() {
         try {
-            //throws Exception
             dayOfWeek = (String) comboBox.getSelectedItem();
             if (dayOfWeek.equals("Select Day Of Week")) {
                 throw new Exception();
             }
 
-            //throws NumberFormatException
             calories = Integer.parseInt(enterCalories.getText());
             protein = Integer.parseInt(enterProtein.getText());
             carbs = Integer.parseInt(enterCarbohydrates.getText());
 
-            //throws exception about duplicate day of week
             for (int i = 0; i < dailyInformation.size(); i++) {
                 if (dailyInformation.get(i).toString().contains(dayOfWeek)) {
                     throw new DuplicateRequestException();
                 }
             }
             dailyInformation.add(new FitnessTracker(dayOfWeek, calories, protein, carbs));
-            System.out.println(dailyInformation.toString());
 
             JOptionPane.showMessageDialog(null, "Data added successfully!", "Success",
                     JOptionPane.INFORMATION_MESSAGE);
@@ -178,9 +172,8 @@ public class FitnessTracker extends JPanel {
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(null, "Please enter a valid number and try again.", "Error", JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
-            System.out.println("it worked");
+            //do nothing
         }
-        System.out.println(caloriesGoal + " " + proteinGoal + " " + carbsGoal);
     }
 
     public void ShowWeeklyStatistics() {
@@ -193,7 +186,6 @@ public class FitnessTracker extends JPanel {
         String statisticsString = "";
 
         try {
-            //average calories, protein, carbs
             if (dailyInformation.isEmpty()) {
                 throw new Exception();
             }
@@ -206,7 +198,6 @@ public class FitnessTracker extends JPanel {
             avgProtein = totalProtein / dailyInformation.size();
             avgCarbs = totalCarbs / dailyInformation.size();
 
-            // if they inputted their weekly goals, say whether this is over or under their goal, otherwise tell them to input their weekly goals
             if (caloriesGoal == 0 || proteinGoal == 0 || carbsGoal == 0) {
                 statisticsString = "Here are your weekly statistics:\n" +
                         "Average Calories: " + avgCalories +
@@ -295,9 +286,8 @@ public class FitnessTracker extends JPanel {
     public void CaloriesBurnedCalculator() {
         try {
             String activity = enterActivity.getText();
-            System.out.println(activity);
             if (activity.isBlank()) {
-                throw new IOException();   //i need to change this and make my own exception lol
+                throw new IOException();
             }
 
             int duration = Integer.parseInt(enterDuration.getText());
@@ -309,17 +299,15 @@ public class FitnessTracker extends JPanel {
             }
             char num = choiceMET.charAt(0);
             int intMET = Integer.parseInt(String.valueOf(num));
-            System.out.println(intMET);
 
             double caloriesBurned = duration * (intMET * 3.5 * bodyWeight) / 200;
-            System.out.println(caloriesBurned);
 
             String displayCaloriesBurned = "You burned " + caloriesBurned + " calories while " + activity + ".";
             JOptionPane.showMessageDialog(null, displayCaloriesBurned, "Calories Burned", JOptionPane.INFORMATION_MESSAGE);
         } catch (IOException g) {
             JOptionPane.showMessageDialog(null, "Please enter the activity's name and try again.", "Error",
                     JOptionPane.ERROR_MESSAGE);
-        } catch(NumberFormatException e) {
+        } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(null, "Please enter a number and try again.", "Error",
                     JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
@@ -329,9 +317,6 @@ public class FitnessTracker extends JPanel {
     }
 
     public static void StartProgram() throws IOException {
-        /* check if txt files are available and if they aren't then create them
-        read in their data and set the associated variables to their values
-         */
         CreateFile();
         readDailyInformation();
         readWeeklyGoals();
@@ -356,9 +341,7 @@ public class FitnessTracker extends JPanel {
                         Integer.parseInt(reader.readLine()),
                         Integer.parseInt(reader.readLine())));
             }
-            System.out.println("read in and created new objects: " + dailyInformation);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -368,9 +351,7 @@ public class FitnessTracker extends JPanel {
             while (reader.ready()) {
                 weeklyGoals.add(Integer.parseInt(reader.readLine()));
             }
-            System.out.println("read in weekly goals: " + weeklyGoals);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -380,11 +361,32 @@ public class FitnessTracker extends JPanel {
                 proteinGoal = (Integer.parseInt(reader2.readLine()));
                 carbsGoal = (Integer.parseInt(reader2.readLine()));
             }
-            System.out.println(caloriesGoal);
-            System.out.println(proteinGoal);
-            System.out.println(carbsGoal);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        catch (IOException e) {
+    }
+
+    public static void StoreData() {
+        try (FileWriter writer = new FileWriter("dailyInformation.txt")) {
+            for (int i = 0; i < dailyInformation.size(); i++) {
+                writer.write(dailyInformation.get(i).dayOfWeek + "\n");
+                writer.write(dailyInformation.get(i).calories + "\n");
+                writer.write(dailyInformation.get(i).protein + "\n");
+                if ((i + 1) == dailyInformation.size()) {
+                    writer.write(String.valueOf(dailyInformation.get(i).carbs));
+                } else {
+                    writer.write(dailyInformation.get(i).carbs + "\n");
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try (FileWriter writer = new FileWriter("weeklyGoals.txt")) {
+            writer.write(caloriesGoal + "\n");
+            writer.write(proteinGoal + "\n");
+            writer.write(String.valueOf(carbsGoal));
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -393,7 +395,6 @@ public class FitnessTracker extends JPanel {
         super(new GridLayout(1, 1));
         JTabbedPane tabbedPane = new JTabbedPane();
 
-        ///////////
         JComponent InputDailyNutrition = new JPanel();
         InputDailyNutrition.setLayout(null);
         comboBox.setBounds(225, 25, 140, 25);
@@ -416,7 +417,6 @@ public class FitnessTracker extends JPanel {
         InputDailyNutrition.add(enter1);
         tabbedPane.addTab("Input Daily Nutrition", InputDailyNutrition);
 
-        ///////////
         JComponent DeleteDailyNutrition = new JPanel();
         DeleteDailyNutrition.setLayout(null);
         comboBox2.setBounds(225, 25, 140, 25);
@@ -427,7 +427,6 @@ public class FitnessTracker extends JPanel {
         DeleteDailyNutrition.add(deleteData);
         tabbedPane.addTab("Delete Daily Nutrition", DeleteDailyNutrition);
 
-        ///////////
         JComponent ViewWeeklyData = new JPanel();
         ViewWeeklyData.setLayout(null);
         comboBox3.setBounds(140, 175, 140, 25);
@@ -446,7 +445,6 @@ public class FitnessTracker extends JPanel {
         ViewWeeklyData.add(showWeeklyStatistics);
         tabbedPane.addTab("View Weekly Data", ViewWeeklyData);
 
-        ///////////
         JComponent CaloriesBurned = new JPanel();
         CaloriesBurned.setLayout(null);
         selectMET.setBounds(200, 125, 200, 25);
@@ -486,7 +484,7 @@ public class FitnessTracker extends JPanel {
     }
 
     private static void createAndShowGUI() {
-        frame = new JFrame("Fitness Tracker");
+        JFrame frame = new JFrame("Fitness Tracker");
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
@@ -494,13 +492,13 @@ public class FitnessTracker extends JPanel {
 
                 int result = JOptionPane.showConfirmDialog(
                         frame,
-                        "test",
-                        "Exit Application",
+                        "Are you sure you want to exit the application?",
+                        "Exit",
                         JOptionPane.YES_NO_OPTION);
 
                 if (result == JOptionPane.YES_OPTION) {
-//                    choice = "quit";
-                    JOptionPane.showMessageDialog(null, "test", "Goodbye", JOptionPane.INFORMATION_MESSAGE);
+                    StoreData();
+                    JOptionPane.showMessageDialog(null, "Thank you for using the Fitness Tracker!", "Exit", JOptionPane.INFORMATION_MESSAGE);
                     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 }
             }
