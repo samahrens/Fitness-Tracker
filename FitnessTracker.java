@@ -1,13 +1,13 @@
 import com.sun.jdi.request.DuplicateRequestException;
 
 import javax.swing.*;
-import javax.swing.text.View;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.IOException;
+import java.io.*;
+import java.security.spec.ECField;
 import java.util.ArrayList;
 
 public class FitnessTracker extends JPanel {
@@ -35,9 +35,10 @@ public class FitnessTracker extends JPanel {
     private JComboBox<String> comboBox3 = new JComboBox<>(choices3);
     private JButton viewData;
     private JButton setWeeklyGoal;
-    int caloriesGoal = 0;
-    int proteinGoal = 0;
-    int carbsGoal = 0;
+    private static ArrayList<Integer> weeklyGoals = new ArrayList<>();
+    private static int caloriesGoal = 0;
+    private static int proteinGoal = 0;
+    private static int carbsGoal = 0;
     private JButton showWeeklyStatistics;
     //tab 4:
     private final String[] choicesMET = {"Select MET (difficulty of task)",
@@ -167,6 +168,11 @@ public class FitnessTracker extends JPanel {
             if (carbsGoal == 0) {
                 throw new NumberFormatException();
             }
+
+            weeklyGoals.clear();
+            weeklyGoals.add(caloriesGoal);
+            weeklyGoals.add(proteinGoal);
+            weeklyGoals.add(carbsGoal);
 
             JOptionPane.showMessageDialog(null, "Weekly goal set successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
         } catch (NumberFormatException e) {
@@ -322,6 +328,67 @@ public class FitnessTracker extends JPanel {
         }
     }
 
+    public static void StartProgram() throws IOException {
+        /* check if txt files are available and if they aren't then create them
+        read in their data and set the associated variables to their values
+         */
+        CreateFile();
+        readDailyInformation();
+        readWeeklyGoals();
+    }
+
+    public static void CreateFile() throws IOException {
+        File newDailyFile1 = new File("dailyInformation.txt");
+        File newDailyFile2 = new File("weeklyGoals.txt");
+        try {
+            newDailyFile1.createNewFile();
+            newDailyFile2.createNewFile();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void readDailyInformation() {
+        try (BufferedReader reader = new BufferedReader(new FileReader("dailyInformation.txt"))) {
+            while (reader.ready()) {
+                dailyInformation.add(new FitnessTracker(reader.readLine(),
+                        Integer.parseInt(reader.readLine()),
+                        Integer.parseInt(reader.readLine()),
+                        Integer.parseInt(reader.readLine())));
+            }
+            System.out.println("read in and created new objects: " + dailyInformation);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void readWeeklyGoals() {
+        try (BufferedReader reader = new BufferedReader(new FileReader("weeklyGoals.txt"))) {
+            while (reader.ready()) {
+                weeklyGoals.add(Integer.parseInt(reader.readLine()));
+            }
+            System.out.println("read in weekly goals: " + weeklyGoals);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try (BufferedReader reader2 = new BufferedReader(new FileReader("weeklyGoals.txt"))) {
+            while (reader2.ready()) {
+                caloriesGoal = (Integer.parseInt(reader2.readLine()));
+                proteinGoal = (Integer.parseInt(reader2.readLine()));
+                carbsGoal = (Integer.parseInt(reader2.readLine()));
+            }
+            System.out.println(caloriesGoal);
+            System.out.println(proteinGoal);
+            System.out.println(carbsGoal);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public FitnessTracker() {
         super(new GridLayout(1, 1));
         JTabbedPane tabbedPane = new JTabbedPane();
@@ -363,11 +430,11 @@ public class FitnessTracker extends JPanel {
         ///////////
         JComponent ViewWeeklyData = new JPanel();
         ViewWeeklyData.setLayout(null);
-        comboBox3.setBounds(225, 125, 140, 25);
+        comboBox3.setBounds(140, 175, 140, 25);
         ViewWeeklyData.add(comboBox3);
         viewData = new JButton("View Data");
         viewData.addActionListener(actionListener);
-        viewData.setBounds(225, 175, 140, 25);
+        viewData.setBounds(320, 175, 140, 25);
         ViewWeeklyData.add(viewData);
         setWeeklyGoal = new JButton("Set Weekly Goals");
         setWeeklyGoal.addActionListener(actionListener);
@@ -444,7 +511,8 @@ public class FitnessTracker extends JPanel {
         frame.setVisible(true);
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
+        StartProgram();
         SwingUtilities.invokeLater(() -> createAndShowGUI());
     }
 
